@@ -2,7 +2,12 @@ require 'oystercard'
 
 describe Oystercard do
 
-  subject(:oystercard) { described_class.new }
+  subject(:oystercard) { described_class.new(journey) }
+
+    let(:entry_station) { double(:entry_station, zone: 1) }
+    let(:exit_station) { double(:exit_station, zone: 2) }
+
+    let(:journey) { double(:journey, entry_station: entry_station, exit_station: exit_station) }
 
   it "has a balance of £0" do
     expect(oystercard.balance).to eq(0)
@@ -30,10 +35,6 @@ describe Oystercard do
   end
 
   describe "Touching in and out" do
-
-    let(:entry_station) { :entry_station }
-    let(:exit_station) { :exit_station }
-    let(:journey) { { entry_station: entry_station, exit_station: exit_station } }
 
     context "with adequate funds for travel" do
 
