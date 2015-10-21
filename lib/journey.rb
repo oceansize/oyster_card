@@ -1,7 +1,7 @@
 require "null_station"
 
 class Journey
-  MINIMUM_FARE = 1
+  BASE_FARE = 1
   PENALTY_FARE = 6
 
   attr_reader :entry_station, :exit_station
@@ -12,7 +12,7 @@ class Journey
 
   def fare
     return PENALTY_FARE unless complete?
-    MINIMUM_FARE
+    BASE_FARE + zone_tariff
   end
 
   def end(station)
@@ -25,6 +25,16 @@ class Journey
 
   def close
     @exit_station = NullStation.new
+  end
+
+  private
+
+  def zone_tariff
+    zones_covered * BASE_FARE
+  end
+
+  def zones_covered
+    (entry_station.zone - exit_station.zone).abs
   end
 end
 
