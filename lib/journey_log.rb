@@ -34,7 +34,7 @@ class JourneyLog
   private
 
   def incomplete_journeys
-    @journeys.reject(&:complete?)
+    @journeys.reject(&:paid?)
   end
 
   attr_reader :journey_klass
