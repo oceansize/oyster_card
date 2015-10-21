@@ -46,12 +46,6 @@ describe Oystercard do
         expect(oystercard.entry_station).to eq(:entry_station)
       end
 
-      it "remembers the exit station after touching out" do
-        oystercard.touch_in(entry_station)
-        oystercard.touch_out(exit_station)
-        expect(oystercard.exit_station).to eq(:exit_station)
-      end
-
       it "is in an active journey after touching in" do
         oystercard.touch_in(entry_station)
         expect(oystercard).to be_in_journey

@@ -28,7 +28,6 @@ class Oystercard
   def touch_out(exit_station)
     self.exit_station = exit_station
     save_journey_history
-    self.entry_station = nil
     deduct(journey_fare)
   end
 
