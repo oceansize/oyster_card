@@ -1,3 +1,5 @@
+require "journey"
+
 class JourneyLog
 
   def initialize(journey_klass: Journey)
@@ -22,7 +24,18 @@ class JourneyLog
     @journeys.dup
   end
 
+  def outstanding_charges
+    incomplete_journeys
+      .each(&:close)
+      .map(&:fare)
+      .reduce(&:+)
+  end
+
   private
+
+  def incomplete_journeys
+    @journeys.reject(&:complete?)
+  end
 
   attr_reader :journey_klass
 end

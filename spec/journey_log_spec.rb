@@ -3,7 +3,7 @@ require "journey_log"
 describe JourneyLog do
   subject(:log) { described_class.new(journey_klass: journey_klass) }
 
-  let(:journey) { instance_spy("Journey", entry_station: entry_station, exit_station: exit_station) }
+  let(:journey) { instance_spy("Journey", entry_station: entry_station, exit_station: exit_station, complete?: true, fare: 1) }
   let(:journey_klass) { class_spy("Journey", new: journey) }
 
   let(:entry_station) { double(:entry_station, zone: 1) }
@@ -34,6 +34,25 @@ describe JourneyLog do
     it "logs all journeys" do
       2.times { take_journey }
       expect(log.journeys).to eq([journey, journey])
+    end
+  end
+
+  describe "Calculating outstanding fares" do
+    let(:fare) { 5 }
+    let(:incomplete_journey) { instance_spy("Journey", complete?: false, fare: fare) }
+
+    before do
+      allow(journey_klass).to receive(:new).and_return(journey, incomplete_journey)
+      2.times { take_journey }
+    end
+
+    it "calculates the charges of all incomplete journeys" do
+      expect(log.outstanding_charges).to eq(fare)
+    end
+
+    it "closes incomplete journeys" do
+      log.outstanding_charges
+      expect(incomplete_journey).to have_received(:close)
     end
   end
 

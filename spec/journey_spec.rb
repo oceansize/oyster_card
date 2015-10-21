@@ -8,9 +8,16 @@ describe Journey do
   end
 
   describe "Ending a journey" do
-    it "has an exit station once the journey has ended" do
+    before do
       journey.end(:exit_station)
+    end
+
+    it "has an exit station once the journey has ended" do
       expect(journey.exit_station).to eq(:exit_station)
+    end
+
+    it "is marked as complete" do
+      expect(journey).to be_complete
     end
   end
 
@@ -37,6 +44,13 @@ describe Journey do
       it "demands a penalty fare" do
         expect(journey.fare).to eq(described_class::PENALTY_FARE)
       end
+    end
+  end
+
+  describe "Closing an incomplete journey" do
+    it "marks the journey as complete" do
+      journey.close
+      expect(journey).to be_complete
     end
   end
 end
