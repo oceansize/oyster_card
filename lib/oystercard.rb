@@ -1,3 +1,5 @@
+require "./lib/journey"
+
 class Oystercard
 
   MAXIMUM_BALANCE = 90
@@ -5,10 +7,10 @@ class Oystercard
 
   attr_reader :balance, :journey, :journey_history
 
-  def initialize(journey_klass: Journey)
+  def initialize(journey: Journey)
     @balance = 0
     @journey_history = []
-    @journey_klass = journey_klass
+    @journey = journey
   end
 
   def top_up(amount_received)
@@ -18,7 +20,7 @@ class Oystercard
 
   def touch_in(entry_station)
     raise "Too low funds" if below_minimum_balance?
-    journey_history << journey_klass.new(entry_station)
+    journey_history << journey.new(entry_station)
   end
 
   def touch_out(exit_station)
@@ -29,7 +31,7 @@ class Oystercard
   private
 
   attr_writer :balance, :journey_history, :current_journey
-  attr_reader :journey_klass
+  attr_reader :journey
 
   def journey_fare
     1

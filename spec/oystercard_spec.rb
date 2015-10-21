@@ -2,13 +2,14 @@ require 'oystercard'
 
 describe Oystercard do
 
-  subject(:oystercard) { described_class.new(journey_klass: journey_klass) }
+  subject(:oystercard) { described_class.new(journey: journey_klass) }
 
     let(:entry_station) { double(:entry_station, zone: 1) }
     let(:exit_station) { double(:exit_station, zone: 2) }
 
-    let(:journey) { spy(:journey, entry_station: entry_station, exit_station: exit_station, in_progress?: true) }
-    let(:journey_klass) { spy(:journey_klass, new: journey) }
+    let(:journey) { instance_spy("Journey", entry_station: entry_station, exit_station: exit_station) }
+
+    let(:journey_klass) { class_spy("Journey", new: journey) }
 
   it "has a balance of £0" do
     expect(oystercard.balance).to eq(0)
