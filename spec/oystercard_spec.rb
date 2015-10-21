@@ -2,19 +2,16 @@ require 'oystercard'
 
 describe Oystercard do
 
-  subject(:oystercard) { described_class.new(journey) }
+  subject(:oystercard) { described_class.new(journey_klass: journey_klass) }
 
     let(:entry_station) { double(:entry_station, zone: 1) }
     let(:exit_station) { double(:exit_station, zone: 2) }
 
-    let(:journey) { double(:journey, entry_station: entry_station, exit_station: exit_station) }
+    let(:journey) { spy(:journey, entry_station: entry_station, exit_station: exit_station, in_progress?: true) }
+    let(:journey_klass) { spy(:journey_klass, new: journey) }
 
   it "has a balance of £0" do
     expect(oystercard.balance).to eq(0)
-  end
-
-  it "by default is not in an active journey" do
-    expect(oystercard).to_not be_in_journey
   end
 
   it "has an empty journey list by default" do
@@ -40,28 +37,18 @@ describe Oystercard do
 
       before do
         oystercard.top_up(1)
+        allow(journey).to receive(:end).with(exit_station)
       end
 
       it "remembers the entry station after touching in" do
         oystercard.touch_in(entry_station)
-        expect(oystercard.entry_station).to eq(:entry_station)
+        expect(journey_klass).to have_received(:new).with(entry_station)
       end
 
       it "remembers the exit station after touching out" do
         oystercard.touch_in(entry_station)
         oystercard.touch_out(exit_station)
-        expect(oystercard.exit_station).to eq(:exit_station)
-      end
-
-      it "is in an active journey after touching in" do
-        oystercard.touch_in(entry_station)
-        expect(oystercard).to be_in_journey
-      end
-
-      it "is not in an active journey when the user has touched out" do
-        oystercard.touch_in(entry_station)
-        oystercard.touch_out(exit_station)
-        expect(oystercard).to_not be_in_journey
+        expect(journey).to have_received(:end).with(exit_station)
       end
 
       it "deducts the journey fare once the user touches out" do
@@ -69,9 +56,8 @@ describe Oystercard do
         expect{ oystercard.touch_out(exit_station) }.to change{ oystercard.balance }.by(-1)
       end
 
-      it "stores a journey(entry and exit stations) after you've touched out" do
+      it "stores a journey after you've touched in" do
         oystercard.touch_in(entry_station)
-        oystercard.touch_out(exit_station)
         expect(oystercard.journey_history).to include(journey)
       end
     end
