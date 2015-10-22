@@ -1,14 +1,11 @@
-require "journey"
-
 class JourneyLog
 
-  def initialize(journey_klass: Journey)
-    @journey_klass = journey_klass
+  def initialize
     @journeys = []
   end
 
-  def start_journey(entry_station)
-    @journeys << journey_klass.new(entry_station)
+  def start_journey(journey)
+    @journeys << journey
   end
 
   def end_journey(exit_station)

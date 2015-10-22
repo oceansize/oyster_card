@@ -7,9 +7,9 @@ class Oystercard
 
   attr_reader :balance, :journey, :journey_log
 
-  def initialize(journey_log: JourneyLog)
+  def initialize(journey_log: JourneyLog.new)
     @balance = 0
-    @journey_log = journey_log.new
+    @journey_log = journey_log
   end
 
   def top_up(amount_received)
@@ -17,9 +17,9 @@ class Oystercard
     raise "Over limit of £#{MAXIMUM_BALANCE}" if above_maximum_balance?
   end
 
-  def touch_in(entry_station)
+  def touch_in(journey)
     raise "Too low funds" if below_minimum_balance?
-    journey_log.start_journey(entry_station)
+    journey_log.start_journey(journey)
   end
 
   def touch_out(exit_station)
