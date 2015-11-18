@@ -13,8 +13,8 @@ class Oystercard
   end
 
   def top_up(amount_received)
+    raise "Over limit of £#{MAXIMUM_BALANCE}" if above_maximum_balance?(amount_received)
     self.balance += amount_received
-    raise "Over limit of £#{MAXIMUM_BALANCE}" if above_maximum_balance?
   end
 
   def touch_in(journey)
@@ -40,8 +40,8 @@ class Oystercard
     balance < MINIMUM_BALANCE
   end
 
-  def above_maximum_balance?
-    balance > MAXIMUM_BALANCE
+  def above_maximum_balance?(amount_received)
+    balance + amount_received > MAXIMUM_BALANCE
   end
 
   def current_journey

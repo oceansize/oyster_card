@@ -1,5 +1,7 @@
 class JourneyLog
 
+  attr_reader :journeys
+
   def initialize
     @journeys = []
   end
@@ -16,11 +18,6 @@ class JourneyLog
     @journeys.last
   end
 
-  # This is going to mess them up!
-  def journeys
-    @journeys.dup
-  end
-
   def outstanding_charges
     incomplete_journeys
       .each(&:close)
@@ -33,6 +30,4 @@ class JourneyLog
   def incomplete_journeys
     @journeys.reject(&:paid?)
   end
-
-  attr_reader :journey_klass
 end
